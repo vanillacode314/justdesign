@@ -7,13 +7,13 @@ export type IComponentMetadata = {
   framework: Framework
   type: ComponentType
   tags: string[]
-} & (
-  | {
-      styled: true
-      designName?: DesignSystem
-      processor?: StyleProcessor
-    }
-  | {
-      styled: false
-    }
-)
+} & Exclusive<
+  {
+    styled: true
+    designName?: DesignSystem
+    processor?: StyleProcessor
+  },
+  {
+    styled: false
+  }
+>

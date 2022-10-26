@@ -6,6 +6,7 @@
   --fg-color: white;
   --radius: 0.25rem;
 
+  display: inline-block;
   padding: 0.5rem 1rem;
   background-color: rgb(var(--bg-color-rgb) / var(--bg-alpha));
   color: var(--fg-color);
@@ -28,10 +29,19 @@
   border: 1px solid var(--border-color);
 }
 
+.btn.text {
+  --fg-color: var(--primary-color);
+  --bg-alpha: 0;
+}
+
+.btn.text:is(:hover, :focus) {
+  --bg-alpha: 0.2;
+}
+
 .btn.outlined:is(:hover, :focus) {
   --bg-alpha: 0.2;
 }
 
-.btn:not(.outlined):is(:hover, :focus) {
+.btn:not(:is(.outlined, .text)):is(:hover, :focus) {
   --bg-color-rgb: 153 27 27;
 }

@@ -1,60 +1,107 @@
 ---
 import Layout from '@/layouts/Base.astro'
 import { Code } from 'astro/components'
+import CodeBlock from '@/internal-components/CodeBlock.astro'
+const globalTypes = Object.values(
+  await import.meta.glob('../global.d.ts', {
+    eager: true,
+    as: 'raw',
+  })
+)[0] as string
 const i = await import.meta.glob('../components/**/*.(tsx|css)', {
   as: 'raw',
 })
 const x = await import.meta.glob('../components/**/*.(tsx)')
+
+function getTypeDefinition(name: string): string {
+  const lines: string[] = []
+  let found: boolean = false
+  let whiteSpaceShift: number = 0
+  for (const line of globalTypes.split('\n')) {
+    if (!found) {
+      found =
+        line.trim().startsWith('type ' + name) ||
+        line.trim().startsWith('interface ' + name)
+      if (!found) continue
+      whiteSpaceShift = line.length - line.trimStart().length
+    }
+    if (line.includes(':BREAK:')) break
+    lines.push(line.slice(whiteSpaceShift))
+  }
+  return lines.join('\n')
+}
 ---
 
 <Layout>
-  <div class="flex flex-col p-5 gap-5">
-    {
-      Object.entries(x).map(async ([key, value]) => {
-        const filepath = key.substring(0, key.lastIndexOf('.'))
-        const extension = key.substring(key.lastIndexOf('.') + 1, key.length)
-        const csspath = filepath + '.module.css'
-        const css = await i[csspath]?.()
-        let fileContents: string = await i[key]()
-        const lines = fileContents.split('\n')
-        const startIndex = lines.findIndex((s) => s.includes(':START:')) + 1
-        const endIndex = lines.findIndex((s) => s.includes(':END:'))
-        const code = [
-          ...lines.filter((line) => line.startsWith('import')),
-          '',
-          ...lines.slice(startIndex, endIndex),
-        ].join('\n')
-        const y = await value()
-        const { Examples } = y
-        return (
-          <div class="border flex flex-col gap-5 items-center rounded-lg border-gray-300 overflow-hidden pt-5">
-            <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
-              Examples
-            </h3>
-            <ul class="flex gap-3">
-              {Examples.map((Comp) => (
-                <li>
-                  <Comp />
-                </li>
-              ))}
-            </ul>
-            <div class="border-b w-full" />
-            <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
-              Code
-            </h3>
-            <Code code={code} lang={extension} />
-            {css && (
-              <>
-                <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
-                  Styles
-                </h3>
-                <Code code={css} lang="css" />
-              </>
-            )}
-          </div>
-        )
-      })
-    }
+  <div class="grid grid-cols-[1fr_16rem] max-w-full overflow-hidden">
+    <div class="flex flex-col p-5 gap-5">
+      {
+        Object.entries(x).map(async ([key, value]) => {
+          const filepath = key.substring(0, key.lastIndexOf('.'))
+          const extension = key.substring(key.lastIndexOf('.') + 1, key.length)
+          const csspath = filepath + '.module.css'
+          const css = await i[csspath]?.()
+          let fileContents: string = await i[key]()
+          const lines = fileContents.split('\n')
+          const startIndex = lines.findIndex((s) => s.includes(':START:')) + 1
+          const endIndex = lines.findIndex((s) => s.includes(':END:'))
+          const imports = lines.filter(
+            (line) =>
+              line.startsWith('import') && !line.startsWith('import type')
+          )
+          const codeFence = lines.slice(startIndex, endIndex)
+          const code = [...imports, '', ...codeFence].join('\n')
+          const typeRegex = /\/\* TYPES: (.*) \*\//
+          let types = lines
+            .find((line) => typeRegex.test(line))
+            ?.match(typeRegex)
+          types = types?.[1].split(' ') || []
+          const y = await value()
+          const { Examples } = y
+          return (
+            <div class="border flex flex-col gap-5 items-center rounded-lg border-gray-300 pt-5 overflow-hidden">
+              <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
+                Examples
+              </h3>
+              <ul class="flex gap-3">
+                {Examples.map((Comp) => (
+                  <li>
+                    <Comp />
+                  </li>
+                ))}
+              </ul>
+              <div class="border-b w-full" />
+              {types.length > 0 && (
+                <>
+                  <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
+                    Types
+                  </h3>
+                  <CodeBlock
+                    code={types
+                      .map((type) => getTypeDefinition(type))
+                      .join('\n\n')}
+                    lang="typescript"
+                  />
+                </>
+              )}
+              <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
+                Code
+              </h3>
+              <CodeBlock code={code} lang={extension} />
+              {css && (
+                <>
+                  <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
+                    Styles
+                  </h3>
+                  <CodeBlock code={css} lang="css" />
+                </>
+              )}
+            </div>
+          )
+        })
+      }
+    </div>
+    <div></div>
   </div>
 </Layout>
 <style is:global>

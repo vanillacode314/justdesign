@@ -1,0 +1,33 @@
+---
+import { Code } from 'astro/components'
+import type { Lang } from 'shiki'
+import CopyBtn from './CopyBtn'
+
+export interface Props {
+  code: string
+  lang: Lang
+}
+
+const { code, lang } = Astro.props as Props
+---
+
+<div class="relative w-full">
+  <div class="absolute right-0 top-0 p-2.5">
+    <CopyBtn text={code} client:load>
+      <span
+        slot="successFallback"
+        class="rounded-full bg-green/50 px-2 uppercase text-xs font-bold text-white flex gap-1 items-center"
+      >
+        Copied
+        <span class="i-mdi-clipboard-check"></span>
+      </span>
+      <span
+        class="rounded-full bg-white/20 px-2 uppercase text-xs font-bold text-white flex gap-1 items-center"
+      >
+        Copy
+        <span class="i-mdi-clipboard"></span>
+      </span>
+    </CopyBtn>
+  </div>
+  <Code code={code} lang={lang} />
+</div>

@@ -10,11 +10,12 @@ export const METADATA: IComponentMetadata = {
   tags: [],
 }
 
+/* TYPES: Exclusive */
 /* :START: */
-interface Props extends JSX.HTMLAttributes<HTMLButtonElement> {
+type Props = {
   href?: string
-  outlined?: boolean
-}
+} & Exclusive<{ outlined?: true }, { text?: true }> &
+  JSX.HTMLAttributes<HTMLButtonElement>
 
 export const Button: Component<Props> = (props) => {
   const [local, others] = splitProps(props, [
@@ -23,6 +24,7 @@ export const Button: Component<Props> = (props) => {
     'ref',
     'class',
     'outlined',
+    'text',
   ])
 
   const _class = () =>
@@ -34,7 +36,10 @@ export const Button: Component<Props> = (props) => {
       component={local.href ? 'a' : 'button'}
       href={local.href}
       class={_class()}
-      classList={{ [styles.outlined]: local.outlined }}
+      classList={{
+        [styles.outlined]: !!local.outlined,
+        [styles.text]: !!local.text,
+      }}
       {...others}
     >
       {local.children}
@@ -45,7 +50,9 @@ export const Button: Component<Props> = (props) => {
 
 export const Examples: Component[] = [
   () => <Button>Click Me!</Button>,
-  () => <Button outlined>Click Me!</Button>,
+  () => <Button href="#home">I am a Link</Button>,
+  () => <Button outlined={true}>Click Me!</Button>,
+  () => <Button text={true}>Click Me!</Button>,
 ]
 
 export default Button
