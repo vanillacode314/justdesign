@@ -1,5 +1,11 @@
 export type ComponentType = 'button' | 'input' | 'textarea'
-export type Framework = 'vanillajs' | 'svelte' | 'solidjs' | 'webcomponent'
+export type Framework =
+  | 'vanillajs'
+  | 'svelte'
+  | 'solidjs'
+  | 'webcomponent'
+  | 'vue'
+  | 'svelte'
 export type StyleProcessor = 'vanillacss' | 'tailwindcss' | 'scss' | 'less'
 export type DesignSystem = 'materialui' | 'bootstrap'
 
@@ -7,11 +13,12 @@ export type IComponentMetadata = {
   framework: Framework
   type: ComponentType
   tags: string[]
-} & Exclusive<
+  typescript: boolean
+} & Xor<
   {
     styled: true
-    designName?: DesignSystem
-    processor?: StyleProcessor
+    designSystem: DesignSystem
+    styleProcessor: StyleProcessor
   },
   {
     styled: false

@@ -1,3 +1,42 @@
+<script lang="ts">
+import * as Ex from './Button.materialui.vue.example.vue'
+export const Example = Ex.default
+import type { IComponentMetadata } from '@/types'
+export const METADATA: IComponentMetadata = {
+  framework: 'vue',
+  type: 'button',
+  designSystem: 'materialui',
+  styleProcessor: 'vanillacss',
+  styled: true,
+  typescript: true,
+  tags: [],
+}
+</script>
+
+<!-- :START: -->
+<script setup lang="ts">
+import { mergeProps } from 'vue'
+
+type Props = {
+  href?: string
+  outlined?: true
+  text?: true
+}
+
+const props = defineProps<Props>()
+
+const merged = mergeProps(props, {
+  class: { btn: true, outlined: props.outlined, text: props.text },
+})
+</script>
+
+<template>
+  <component :is="href ? 'a' : 'button'" v-bind="merged">
+    <slot />
+  </component>
+</template>
+
+<style>
 .btn {
   --primary-color-rgb: 185 28 28;
   --primary-color: rgb(var(--primary-color-rgb));
@@ -49,3 +88,5 @@
 .btn:not(:is(.outlined, .text)):is(:hover, :focus) {
   --bg-color-rgb: 153 27 27;
 }
+</style>
+<!-- :END: -->

@@ -1,0 +1,126 @@
+---
+import Layout from '@/layouts/Base.astro'
+import CodeBlock from '@/internal-components/CodeBlock.astro'
+import Accordion from '@/internal-components/Accordion'
+import { getTypeDefinition, splitPathAndExtension } from '@/utils'
+
+/* @import */ /* prettier-ignore */
+import {Example, METADATA} from '../../../../../../components/materialui/solidjs/vanillacss/Button.materialui.solidjs'
+/* @fullpath */ /* prettier-ignore */
+const FULLPATH = '../../../../../../components/materialui/solidjs/vanillacss/Button.materialui.solidjs.tsx'
+/* @globaltypes */ /* prettier-ignore */
+const globalTypes = Object.values( await import.meta.glob('../../../../../../global.d.ts', { eager: true, as: 'raw', }))[0] as string
+/* @rawfilecontents */ /* prettier-ignore */
+const rawFileContents = await import.meta.glob('../../../../../../components/**/*.(tsx|vue|.css)', { as: 'raw' })
+
+// Parse metadata
+const { filepath, extension } = splitPathAndExtension(FULLPATH)
+const csspath = filepath + '.module.css'
+const css = await rawFileContents[csspath]?.()
+const fileContents: string = await rawFileContents[FULLPATH]()
+const lines = fileContents.split('\n')
+const startIndex = lines.findIndex((s) => s.includes(':START:')) + 1
+const endIndex = lines.findIndex((s) => s.includes(':END:'))
+const codeFence = lines.slice(startIndex, endIndex)
+const typeRegex = /\/\* TYPES: (.*) \*\//
+const imports = lines
+  .filter(
+    (line) => line.startsWith('import') && !line.startsWith('import type')
+  )
+  .filter((_import) => !codeFence.includes(_import))
+const code = [...imports, '', ...codeFence].join('\n').trim()
+const types =
+  lines
+    .find((line) => typeRegex.test(line))
+    ?.match(typeRegex)?.[1]
+    .split(' ') || []
+---
+
+<Layout>
+  <div
+    class="grid lg:grid-cols-[1fr_16rem] grid-rows-[16rem_1fr] lg:grid-rows-1 gap-5 p-5"
+  >
+    <nav
+      class="grid-row-start-1 lg:grid-col-start-2 grid-col-span-1 flex flex-col gap-3"
+      aria-label="Component Variants"
+    >
+      <Accordion client:load title="Design Systems">
+        <ul class="flex flex-col gap-1 uppercase text-sm font-semibold">
+          <li>Material UI</li>
+          <li>Unstyled</li>
+        </ul>
+      </Accordion>
+      <Accordion client:load title="Framework">
+        <ul class="flex flex-col gap-1 uppercase text-sm font-semibold">
+          <li>Vue</li>
+          <li>Svelte</li>
+          <li>SolidJS</li>
+        </ul>
+      </Accordion>
+    </nav>
+    <div class="flex flex-col gap-5 overflow-hidden lg:grid-row-start-1">
+      <div
+        class="border flex flex-col gap-3 items-center rounded-lg border-gray-300 pt-3 overflow-hidden"
+      >
+        <h2
+          class="w-full px-5 uppercase tracking-wide font-mono flex justify-center font-bold text-sm text-bluegray-600"
+        >
+          {METADATA.framework}
+          {
+            METADATA.styled ? (
+              <>
+                / {METADATA.designSystem} / {METADATA.styleProcessor}
+              </>
+            ) : (
+              <>/ Unstyled</>
+            )
+          }
+          {METADATA.typescript ? <>/ Typescript</> : <>/ Javascript</>}
+        </h2>
+        <div class="border-b w-full"></div>
+        {
+          Example && (
+            <>
+              <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
+                Example
+              </h3>
+              <Example client:load />
+              <div class="border-b w-full" />
+            </>
+          )
+        }
+        {
+          types.length > 0 && (
+            <>
+              <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
+                Types
+              </h3>
+              <CodeBlock
+                code={types
+                  .map((type) => getTypeDefinition(globalTypes, type))
+                  .join('\n\n')}
+                lang="typescript"
+              />
+            </>
+          )
+        }
+        <h3
+          class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs"
+        >
+          Code
+        </h3>
+        <CodeBlock code={code} lang={extension} />
+        {
+          css && (
+            <>
+              <h3 class="w-full px-5 uppercase tracking-wide text-gray font-bold text-xs">
+                Styles
+              </h3>
+              <CodeBlock code={css} lang="css" />
+            </>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</Layout>

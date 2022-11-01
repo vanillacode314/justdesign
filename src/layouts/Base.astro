@@ -1,6 +1,6 @@
 ---
+import '@unocss/reset/eric-meyer.css'
 import 'uno.css'
-import '@unocss/reset/tailwind.css'
 import SideNav from '@/internal-components/SideNav.astro'
 export interface Props {
   title?: string
@@ -9,27 +9,31 @@ export interface Props {
 const { title } = Astro.props as Props
 ---
 
-<html lang="en" class="h-full">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>{title || 'Design'}</title>
-    <style>
+    <style is:global>
       * {
         max-height: 9999999999px;
+        @apply box-border;
       }
       body,
       html {
+        height: 100%;
+        max-height: 100%;
         overflow-x: hidden;
+        @apply font-sans;
       }
     </style>
   </head>
   <body>
     <div class="grid grid-cols-[auto_1fr] h-full">
       <SideNav />
-      <div class="w-full">
+      <div>
         <slot />
       </div>
     </div>

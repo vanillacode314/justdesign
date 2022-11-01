@@ -1,11 +1,12 @@
 import { Dynamic } from 'solid-js/web'
 import { JSX, Component, splitProps } from 'solid-js'
-import type { IComponentMetadata } from '@/src/types'
+import type { IComponentMetadata } from '@/types'
 
 export const METADATA: IComponentMetadata = {
   framework: 'solidjs',
-  tags: [],
+  typescript: true,
   type: 'button',
+  tags: [],
   styled: false,
 }
 
@@ -30,6 +31,6 @@ export const Button: Component<Props> = (props) => {
 }
 /* :END: */
 
-export const Examples: Component[] = [() => <Button>Click Me!</Button>]
+export const Example: Component = () => <Button>Click Me!</Button>
 
 export default Button

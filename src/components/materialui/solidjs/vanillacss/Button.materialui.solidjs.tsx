@@ -1,20 +1,23 @@
 import styles from './Button.materialui.solidjs.module.css'
-import { JSX, Component, splitProps } from 'solid-js'
+import { JSX, Component, splitProps, createSignal } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import type { IComponentMetadata } from '@/types'
 
 export const METADATA: IComponentMetadata = {
+  framework: 'solidjs',
   type: 'button',
   designSystem: 'materialui',
+  styleProcessor: 'vanillacss',
   styled: true,
+  typescript: true,
   tags: [],
 }
 
-/* TYPES: Exclusive */
+/* TYPES: Xor */
 /* :START: */
 type Props = {
   href?: string
-} & Exclusive<{ outlined?: true }, { text?: true }> &
+} & Xor<{ outlined?: true }, { text?: true }> &
   JSX.HTMLAttributes<HTMLButtonElement>
 
 export const Button: Component<Props> = (props) => {
@@ -48,11 +51,18 @@ export const Button: Component<Props> = (props) => {
 }
 /* :END: */
 
-export const Examples: Component[] = [
-  () => <Button>Click Me!</Button>,
-  () => <Button href="#home">I am a Link</Button>,
-  () => <Button outlined={true}>Click Me!</Button>,
-  () => <Button text={true}>Click Me!</Button>,
-]
+export const Example: Component = () => {
+  const [count, setCount] = createSignal<number>(0)
+  return (
+    <div class="p-5 flex flex-wrap gap-3">
+      <Button onClick={() => setCount((c) => c + 1)}>
+        Click Me! {count()}
+      </Button>
+      <Button href="#home">I am a Link</Button>
+      <Button outlined>Outlined</Button>
+      <Button text>Text</Button>
+    </div>
+  )
+}
 
 export default Button

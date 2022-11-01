@@ -26,6 +26,7 @@ export const CopyBtn: Component<Props> = (props) => {
 
   return (
     <button
+      class="bg-transparent outline-none border-none font-mono"
       onClick={() => {
         navigator.clipboard.writeText(props.text).then(() => {
           clearTimeout(timer)

@@ -1,14 +1,12 @@
 import { defineConfig } from 'astro/config'
 import Unocss from '@unocss/vite'
 import {
-  transformerCompileClass,
   presetWebFonts,
   presetUno,
   presetIcons,
+  transformerDirectives,
 } from 'unocss'
 import solidJs from '@astrojs/solid-js'
-
-// https://astro.build/config
 import svelte from '@astrojs/svelte'
 import react from '@astrojs/react'
 import preact from '@astrojs/preact'
@@ -20,6 +18,8 @@ export default defineConfig({
   vite: {
     plugins: [
       Unocss({
+        transformCSS: true,
+        transformers: [transformerDirectives()],
         presets: [
           presetWebFonts({
             provider: 'google',
@@ -38,7 +38,6 @@ export default defineConfig({
         ],
       }),
     ],
-    transformers: [transformerCompileClass()],
   },
   integrations: [solidJs(), svelte(), react(), preact(), vue()],
 })

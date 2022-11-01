@@ -7,11 +7,13 @@ specifiers:
   '@astrojs/svelte': ^1.0.2
   '@astrojs/vue': ^1.2.1
   '@iconify/json': ^2.1.126
+  '@types/lodash-es': ^4.17.6
   '@types/react': ^18.0.21
   '@types/react-dom': ^18.0.6
   '@unocss/reset': ^0.45.30
   '@unocss/vite': ^0.45.30
   astro: ^1.5.2
+  lodash-es: ^4.17.21
   preact: ^10.6.5
   react: ^18.0.0
   react-dom: ^18.0.0
@@ -28,10 +30,12 @@ dependencies:
   '@astrojs/solid-js': 1.2.1_solid-js@1.6.0
   '@astrojs/svelte': 1.0.2_besnmoibwkhwtentvwuriss7pa
   '@astrojs/vue': 1.2.1_vue@3.2.41
+  '@types/lodash-es': 4.17.6
   '@types/react': 18.0.21
   '@types/react-dom': 18.0.6
   '@unocss/reset': 0.45.30
   astro: 1.5.2
+  lodash-es: 4.17.21
   preact: 10.11.2
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -860,6 +864,16 @@ packages:
 
   /@types/json5/0.0.30:
     resolution: {integrity: sha512-sqm9g7mHlPY/43fcSNrCYfOeX9zkTTK+euO5E6+CVijSMm5tTjkVdwdqRkY3ljjIAf8679vps5jKUoJBCLsMDA==}
+    dev: false
+
+  /@types/lodash-es/4.17.6:
+    resolution: {integrity: sha512-R+zTeVUKDdfoRxpAryaQNRKk3105Rrgx2CFRClIgRGaqDTdjsm8h6IYA8ir584W3ePzkZfst5xIgDwYrlh9HLg==}
+    dependencies:
+      '@types/lodash': 4.14.186
+    dev: false
+
+  /@types/lodash/4.14.186:
+    resolution: {integrity: sha512-eHcVlLXP0c2FlMPm56ITode2AgLMSa6aJ05JTTbYbI+7EMkCEE5qk2E41d5g2lCVTqRe0GnnRFurmlCsDODrPw==}
     dev: false
 
   /@types/mdast/3.0.10:
@@ -2892,6 +2906,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-locate: 5.0.0
+
+  /lodash-es/4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: false
 
   /log-symbols/5.1.0:
     resolution: {integrity: sha512-l0x2DvrW294C9uDCoQe1VSU4gf529FkSZ6leBl4TiqZH/e+0R7hSfHQBNut2mNygDgHwvYHfFLn6Oxb3VWj2rA==}
